@@ -1,11 +1,16 @@
 const mongoose = require("mongoose");
 
-const reviewSchema = new mongoose.Schema({
-    booking_id: { type: mongoose.Schema.Types.ObjectId, ref: "bookings" },
-    rating: { type: Number, enum: [1, 2, 3, 4, 5] },
-    feedback_text: { type: String },
-    images: [{ type: String }],
-});
+const reviewSchema = new mongoose.Schema(
+    {
+        booking_id: { type: mongoose.Schema.Types.ObjectId, ref: "bookings", required: true },
+        rating: { type: Number, enum: [1, 2, 3, 4, 5], required: true },
+        feedback_text: { type: String },
+        images: [{ type: String }],
+    },
+    {
+        timestamps: true,
+    }
+);
 
 const Reviews = mongoose.model("Reviews", reviewSchema);
 

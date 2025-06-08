@@ -1,7 +1,7 @@
 const express = require("express");
 require("dotenv").config();
 
-const { connectToDB } = require("./connection");
+const { connectToDB } = require("./config/connection");
 
 connectToDB(process.env.MONGO_DB_URL)
     .then(() => {

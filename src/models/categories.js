@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const categorySchmea = new mongoose.Schmea({
-    name: { type: String },
+    name: { type: String, required: true },
 });
 
 const Categories = mongoose.model("categories", categorySchmea);

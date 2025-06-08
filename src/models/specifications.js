@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 
 const specificationSchema = new mongoose.Schema({
-    category_id: { type: mongoose.Schema.Types.ObjectId, ref: "category" },
-    name: { type: String },
+    category_id: { type: mongoose.Schema.Types.ObjectId, ref: "categories", required: true },
+    name: { type: String, required: true },
 });
 
 const Specifications = mongoose.model("specifications", specificationSchema);
