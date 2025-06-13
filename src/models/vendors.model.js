@@ -1,12 +1,11 @@
 const mongoose = require("mongoose");
 
-const ownerSchema = new mongoose.Schema(
+const vendorSchema = new mongoose.Schema(
     {
         owner_name: { type: String, required: true },
         password: { type: String },
         phone_no: {
             type: String,
-            match: [/^\d{10}$/, "Phone number must be exactly 10 digits"],
             required: true,
         },
         email: { type: String, required: true },
@@ -17,6 +16,6 @@ const ownerSchema = new mongoose.Schema(
     }
 );
 
-const Owners = mongoose.model("owners", ownerSchema);
+const Vendor = mongoose.model("vendors", vendorSchema);
 
-module.exports = Owners;
+module.exports = Vendor;

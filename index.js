@@ -3,6 +3,10 @@ require("dotenv").config();
 
 const { connectToDB } = require("./config/connection");
 
+const customerRouter = require("./src/routers/customer.routes");
+const vendorRouter = require("./src/routers/vendor.routes");
+const categoryRouter = require("./src/routers/category.routes");
+
 connectToDB(process.env.MONGO_DB_URL)
     .then(() => {
         console.log("MongoDB connected successfully");
@@ -13,11 +17,16 @@ connectToDB(process.env.MONGO_DB_URL)
 
 const app = express();
 
+app.use(express.json());
+
+app.use("/api/customer", customerRouter);
+
+app.use("/api/vendor", vendorRouter);
+
+app.use("/api/category", categoryRouter);
+
 const port = 5001;
 
 app.listen(port, () => {
     console.log(`Server is running at port ${port}`);
 });
- 
-
-   

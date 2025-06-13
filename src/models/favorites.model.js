@@ -8,3 +8,4 @@ const favoriteSchema = new mongoose.Schema({
 const Favourites = mongoose.model("favorites", favoriteSchema);
 
 module.exports = Favourites;
+

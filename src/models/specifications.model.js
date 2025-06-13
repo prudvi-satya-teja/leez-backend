@@ -8,3 +8,5 @@ const specificationSchema = new mongoose.Schema({
 const Specifications = mongoose.model("specifications", specificationSchema);
 
 module.exports = Specifications;
+
+

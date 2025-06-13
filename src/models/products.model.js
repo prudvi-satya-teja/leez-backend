@@ -11,9 +11,16 @@ const productSchema = new mongoose.Schema(
         views: { type: Number, default: 0 },
         images: [{ type: String }],
         location: {
-            type: { String, enum: ["Point"], required: true },
-            coordinates: { type: [Number], required: true },
-        },
+            type: {
+                type: String,
+                enum: ["Point"],
+                required: true,
+            },
+            coordinates: {
+                type: [Number],
+                required: true,
+            },
+        }, 
         count: { type: Number, default: 1 },
     },
     {

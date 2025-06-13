@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const customerSchema = new mongoose.Schema({
     name: { type: String, required: true },
-    phone_no: { type: String, match: [/^\d{10}$/, "Phone number must be exactly 10 digits"] },
+    phoneNo: { type: String, },
     email: { type: String, required: true },
     password: { type: String },
     photo: { type: String },
