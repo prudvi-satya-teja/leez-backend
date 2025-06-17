@@ -4,8 +4,16 @@ const router = express.Router();
 
 const vendorController = require("../controllers/vendor.controller");
 
-router.get("/signup", vendorController.signup);
+// image
 
-router.get("/login", vendorController.login);
+router.post("/signup", vendorController.signup);
+
+router.post("/login", vendorController.login);
+
+router.post("/verify-otp", vendorController.verifyOtp);
+
+router.post("/create-account", vendorController.createAccount);
 
 module.exports = router;
+
+

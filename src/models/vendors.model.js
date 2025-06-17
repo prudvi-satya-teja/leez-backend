@@ -2,9 +2,9 @@ const mongoose = require("mongoose");
 
 const vendorSchema = new mongoose.Schema(
     {
-        owner_name: { type: String, required: true },
+        name: { type: String, required: true },
         password: { type: String },
-        phone_no: {
+        phoneNo: {
             type: String,
             required: true,
         },

@@ -2,12 +2,12 @@ const mongoose = require("mongoose");
 
 const productSchema = new mongoose.Schema(
     {
-        owner_id: { type: mongoose.Schema.Types.ObjectId, ref: "owners", required: true },
+        vendorId: { type: mongoose.Schema.Types.ObjectId, ref: "owners", required: true },
         name: { type: String, required: true },
-        category_id: { type: mongoose.Schema.Types.ObjectId, ref: "categories", required: true },
+        categoryId: { type: mongoose.Schema.Types.ObjectId, ref: "categories", required: true },
         price: { type: Number, required: true },
-        availbility_status: { type: Boolean },
-        descritpion: { type: String },
+        availbilityStatus: { type: Boolean },
+        description: { type: String },
         views: { type: Number, default: 0 },
         images: [{ type: String }],
         location: {
@@ -20,8 +20,14 @@ const productSchema = new mongoose.Schema(
                 type: [Number],
                 required: true,
             },
-        }, 
+        },
         count: { type: Number, default: 1 },
+        specifications: [
+            {
+                key: { type: String, required: true },
+                value: { type: String, required: true },
+            },
+        ],
     },
     {
         timestamps: true,

@@ -7,3 +7,5 @@ const { createCategory } = require("../controllers/category.controller");
 router.post("/create-category", createCategory);
 
 module.exports = router;
+
+

@@ -2,11 +2,11 @@ const mongoose = require("mongoose");
 
 const bookingSchema = new mongoose.Schema(
     {
-        cusomer_id: { type: mongoose.Schema.Types.ObjectId, ref: "customers", required: true },
-        product_id: { type: mongoose.Schema.Types.ObjectId, ref: "products", required: true },
+        customerId: { type: mongoose.Schema.Types.ObjectId, ref: "customers", required: true },
+        productId: { type: mongoose.Schema.Types.ObjectId, ref: "products", required: true },
         count: { type: Number, default: 1 },
-        start_date_time: { type: Date, required: true },
-        end_date_time: { type: Date, required: true },
+        startDateTime: { type: Date, required: true },
+        endDateTime: { type: Date, required: true },
         status: {
             type: String,
             enum: ["ongoing", "started", "completed", "cancelled", "pending", "confirmed"],
@@ -16,7 +16,7 @@ const bookingSchema = new mongoose.Schema(
         timestamps: true,
     }
 );
- 
+
 const Bookings = mongoose.model("bookings", bookingSchema);
 
 module.exports = Bookings;
