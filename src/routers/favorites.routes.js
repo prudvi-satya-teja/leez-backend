@@ -8,6 +8,6 @@ const { addToFavorite } = require("../controllers/favorites.controller");
 router.post("/add-to-favorite", addToFavorite);
 
 // remove from the favorites
-router.post("/remove-from-favorite", removeFromFavorite);
+// router.post("/remove-from-favorite", removeFromFavorite);
 
 module.exports = router;
