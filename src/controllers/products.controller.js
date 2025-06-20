@@ -3,7 +3,6 @@ const Category = require("../models/categories.model");
 const Product = require("../models/products.model");
 const ProductSpecifications = require("../models/product_specificatioins.model");
 const Specifications = require("../models/specifications.model");
-const { eventNames } = require("../models/otp.model");
 
 const addProduct = async (req, res) => {
     try {
@@ -14,7 +13,7 @@ const addProduct = async (req, res) => {
         const categoryId = await Category.findOne({ name: category });
 
         const product = await Product.findOne({
-            ownerId: ownerId._id,
+            vendorId: vendorId._id,
             name: name,
             categoryId: categoryId._id,
         });
@@ -23,14 +22,17 @@ const addProduct = async (req, res) => {
             return res.status(400).json({ success: false, message: "Product already exists" });
         }
 
+        const imageUrls = req.files.map((file) => file.filename);
+
         const newProduct = new Product({
-            vendorId: ownerId._id,
+            vendorId: vendorId._id,
             name: name,
             categoryId: categoryId._id,
             price: price,
             description: description,
             count: count,
             location: location,
+            images: imageUrls,
         });
 
         await newProduct.save();

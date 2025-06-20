@@ -9,7 +9,7 @@ const productSchema = new mongoose.Schema(
         availbilityStatus: { type: Boolean },
         description: { type: String },
         views: { type: Number, default: 0 },
-        images: [{ type: String }],
+        images: [String],
         location: {
             type: {
                 type: String,
