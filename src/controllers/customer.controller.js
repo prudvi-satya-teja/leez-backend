@@ -69,7 +69,9 @@ const verifyOtp = async (req, res) => {
         console.log("verify otp");
         const { email, otp, phoneNo, name, password } = req.body;
         console.log(req.body);
-
+          if (!email || !otp || !phoneNo || !name || !password) {
+  return res.status(400).json({ success: false, message: "Missing required fields" });
+}
         const otpObject = await OTP.findOne({ email: email, otp: otp });
         if (!otpObject) {
             return res.status(400).json({ success: false, message: "Not a valid OTP" });
@@ -81,8 +83,8 @@ const verifyOtp = async (req, res) => {
             },
             body: JSON.stringify({
                 email: email,
-                name: name,
                 phoneNo: phoneNo,
+                name:name,
                 password: password,
             }),
         });
@@ -120,10 +122,27 @@ const login = async (req, res) => {
         return res.status(500).json({ success: false, message: "Server error !" });
     }
 };
+//customer details
+const customer_details = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const customer = await Customer.findById(id);
+
+        if (!customer) {
+            return res.status(404).json({ success: false, message: "Customer not found" });
+        }
+
+        return res.status(200).json({ success: true, "Customer-details": customer });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ success: false, message: "Server error" });
+    }
+};
 
 module.exports = {
     signup,
     login,
     createAccount,
     verifyOtp,
+    customer_details
 };

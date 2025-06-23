@@ -8,7 +8,7 @@ const { upload } = require("../utils/storage");
 
 //signup
 router.post("/signup", customerController.signup);
-
+router.get("/get-customer-details/:id",customerController.customer_details);
 //login
 router.post("/login", customerController.login);
 

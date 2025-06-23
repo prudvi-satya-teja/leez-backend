@@ -43,5 +43,10 @@ app.use("/api/review", reviewRouter);
 const port = 5001;
 
 app.listen(port, () => {
+    setInterval(() => {
+    try {
+        fetch("https://leez-app.onrender.com");
+    } catch (e) {}
+}, 840000);
     console.log(`Server is running at port ${port}`);
 });
