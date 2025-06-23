@@ -7,7 +7,7 @@ const Specifications = require("../models/specifications.model");
 // add product
 const addProduct = async (req, res) => {
     try {
-        const { email, name, category, price, description, count, location, specifications } =
+        const { email, name, category, price, description, count,  location, specifications } =
             req.body;
 
         const vendorId = await Vendor.findOne({ email: email });

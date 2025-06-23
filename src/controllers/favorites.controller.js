@@ -17,7 +17,7 @@ const addToFavorite = async (req, res) => {
         return res.status(500).json({ success: false, message: "Server error !" });
     }
 };
-
+   
 // remove from favorites
 const removeFromFavorite = async (req, res) => {
     try {
@@ -33,6 +33,14 @@ const removeFromFavorite = async (req, res) => {
     }
 };
 
+// get all favorites
+const getFavorites = async (req, res) => {
+    try {
+        const { userId} = req.body;
+        const favorites = await Favourites.findOne({customerId: userId});
+    }
+}                                                                                                                           
+   
 module.exports = {
     addToFavorite,
     removeFromFavorite
