@@ -6,7 +6,7 @@ const customerController = require("../controllers/customer.controller");
 // image
 const { upload } = require("../utils/storage");
 
-//signup 
+//signup
 router.post("/signup", customerController.signup);
 
 //login
@@ -20,10 +20,6 @@ router.post("/create-account", customerController.createAccount);
 
 //update image
 
-//
-
-//get-user-details 
-
-
+//get-user-details
 
 module.exports = router;

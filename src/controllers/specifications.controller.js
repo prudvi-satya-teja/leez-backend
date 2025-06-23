@@ -1,6 +1,8 @@
 const Specifications = require("../models/specifications.model");
 const Category = require("../models/categories.model");
 
+
+// add - specificatioins
 const addSpecification = async (req, res) => {
     try {
         const { category, name } = req.body;

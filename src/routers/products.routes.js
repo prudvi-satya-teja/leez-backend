@@ -14,4 +14,11 @@ router.post("/add-product", upload.array("images", 6), addProduct);
 
 // delete-prodcut
 
+// get product details by category
+// router.get("/products-by-category/:category", getProductsByCategory);
+
+// get all product details
+// router.get("/get-all-products", getAllProducts);
+
+
 module.exports = router;

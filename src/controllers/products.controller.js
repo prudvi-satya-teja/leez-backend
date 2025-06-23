@@ -4,6 +4,7 @@ const Product = require("../models/products.model");
 const ProductSpecifications = require("../models/product_specificatioins.model");
 const Specifications = require("../models/specifications.model");
 
+// add product
 const addProduct = async (req, res) => {
     try {
         const { email, name, category, price, description, count, location, specifications } =
@@ -57,6 +58,25 @@ const addProduct = async (req, res) => {
         return res.status(500).json({ success: true, message: "Server Error !" });
     }
 };
+
+// remove product
+
+// update product
+
+// get all products
+const getAllProducts = async (req, res) => {
+    try {
+        const products = await Product.find({});
+        return res
+            .status(200)
+            .json({ success: true, message: "Product added successfully", products: products });
+    } catch (err) {
+        console.log("Error is: ", err);
+        return res.status(500).json({ success: true, message: "Server Error !" });
+    }
+};
+
+// get products by category
 
 module.exports = {
     addProduct,

@@ -3,6 +3,7 @@ const Products = require("../models/products.model");
 const Vendors = require("../models/vendors.model");
 const Bookings = require("../models/bookings.model");
 
+// book an product 
 const bookAnItem = async (req, res) => {
     try {
         const { email, vendorEmail, productName, count, startDateTime, endDateTime } = req.body;
@@ -30,6 +31,10 @@ const bookAnItem = async (req, res) => {
     }
 };
 
+// cancel the product
+
+
+// cancel an prodcut
 module.exports = {
     bookAnItem,
 };

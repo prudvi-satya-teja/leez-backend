@@ -1,5 +1,6 @@
 const Category = require("../models/categories.model");
 
+// create category
 const createCategory = async (req, res) => {
     try {
         const { category } = req.body;
