@@ -8,7 +8,6 @@ const { upload } = require("../utils/storage");
 
 //signup
 router.post("/signup", customerController.signup);
-router.get("/get-customer-details/:id",customerController.customer_details);
 //login
 router.post("/login", customerController.login);
 
@@ -18,8 +17,10 @@ router.post("/verify-otp", customerController.verifyOtp);
 //create-account
 router.post("/create-account", customerController.createAccount);
 
+//get-customer-details
+router.get("/get-customer-details/:id",customerController.customer_details);
+
 //update image
 
-//get-user-details
 
 module.exports = router;

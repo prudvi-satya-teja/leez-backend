@@ -78,6 +78,31 @@ const getAllProducts = async (req, res) => {
 
 // get products by category
 
+// GET /api/products/all-products?categoryId=60f123abc456...
+
+const getProductsByCategory = async (req, res) => {
+    try {
+        const { categoryId } = req.query;
+
+        // If categoryId is provided, filter by it
+        const filter = categoryId ? { categoryId } : {};
+
+        const products = await Product.find(filter);
+
+        return res.status(200).json({
+            success: true,
+            message: "Products fetched successfully",
+            products: products,
+        });
+    } catch (err) {
+        console.log("Error is: ", err);
+        return res.status(500).json({ success: false, message: "Server Error !" });
+    }
+};
+
+
 module.exports = {
     addProduct,
+    getAllProducts,
+    getProductsByCategory
 };
