@@ -20,6 +20,11 @@ router.post("/create-account", customerController.createAccount);
 //get-customer-details
 router.get("/get-customer-details/:id",customerController.customer_details);
 
+//updateotp
+router.post("/get-update-otp",customerController.generateOtpForUpdate);
+//updateprofile
+router.post("/update-profile",customerController.verifyOtpAndUpdateCustomer);
+
 //update image
 
 

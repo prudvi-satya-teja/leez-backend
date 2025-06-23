@@ -82,24 +82,23 @@ const getAllProducts = async (req, res) => {
 
 const getProductsByCategory = async (req, res) => {
     try {
-        const { categoryId } = req.query;
+        const { category } = req.params;
 
-        // If categoryId is provided, filter by it
-        const filter = categoryId ? { categoryId } : {};
-
-        const products = await Product.find(filter);
+        const categoryDoc = await Category.findOne({ name: category });
+        console.log(categoryDoc);
+        if (!categoryDoc) {
+            return res.status(404).json({ success: false, message: "Category not found" });
+        }
 
         return res.status(200).json({
             success: true,
-            message: "Products fetched successfully",
-            products: products,
+            categoryId: categoryDoc._id,
         });
-    } catch (err) {
-        console.log("Error is: ", err);
-        return res.status(500).json({ success: false, message: "Server Error !" });
+    } catch (error) {
+        console.error("Error fetching category ID:", error);
+        return res.status(500).json({ success: false, message: "Server Error" });
     }
 };
-
 
 module.exports = {
     addProduct,
