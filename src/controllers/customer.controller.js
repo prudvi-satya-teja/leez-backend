@@ -180,6 +180,8 @@ const verifyOtpAndUpdateCustomer = async (req, res) => {
     try {
         const { customerId, email, otp, name, phoneNo, photo, password } = req.body;
 
+        console.log(req.file);
+
         if (!customerId || !email || !otp) {
             return res.status(400).json({ success: false, message: "Missing OTP or customer ID" });
         }
@@ -193,7 +195,7 @@ const verifyOtpAndUpdateCustomer = async (req, res) => {
         const updateFields = {};
         if (name) updateFields.name = name;
         if (phoneNo) updateFields.phoneNo = phoneNo;
-        if (photo) updateFields.photo = photo;
+        if (req.file?.filename) updateFields.photo = req.file.filename;
         if (password) updateFields.password = password;
 
         const updatedCustomer = await Customer.findByIdAndUpdate(customerId, updateFields, {
