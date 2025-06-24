@@ -3,12 +3,12 @@ const Category = require("../models/categories.model");
 const Product = require("../models/products.model");
 const ProductSpecifications = require("../models/product_specificatioins.model");
 const Specifications = require("../models/specifications.model");
+const { version } = require("mongoose");
 
 // add product
 const addProduct = async (req, res) => {
     try {
-        const { email, name, category, price, description, count,  location, specifications } =
-            req.body;
+        const { email, name, category, price, description, count, longitude, latitude } = req.body;
 
         const vendorId = await Vendor.findOne({ email: email });
         const categoryId = await Category.findOne({ name: category });
@@ -32,7 +32,8 @@ const addProduct = async (req, res) => {
             price: price,
             description: description,
             count: count,
-            location: location,
+            longitude: parseFloat(longitude),
+            latitude: parseFloat(latitude),
             images: imageUrls,
         });
 
@@ -40,11 +41,20 @@ const addProduct = async (req, res) => {
 
         const productId = await Product.findOne({ name: name });
 
+        console.log(newProduct);
+
+        // build specifications manually from form-data
+        const specifications = [];
         for (let i = 0; i < 4; i++) {
-            const specificationId = await Specifications({ name: specifications[i].key });
+            const key = req.body[`specifications[${i}].key`];
+            const value = req.body[`specifications[${i}].value`];
+            // if (key && value) {
+            //     specifications.push({ key, value });
+            // }
+            const specificationId = await Specifications({ name: key });
             const productSpecifications = new ProductSpecifications({
                 specificationId: specificationId,
-                value: specifications[i].value,
+                value: value,
                 productId: productId._id,
             });
 

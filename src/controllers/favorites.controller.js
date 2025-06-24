@@ -34,12 +34,12 @@ const removeFromFavorite = async (req, res) => {
 };
 
 // get all favorites
-const getFavorites = async (req, res) => {
-    try {
-        const { userId} = req.body;
-        const favorites = await Favourites.findOne({customerId: userId});
-    }
-}                                                                                                                           
+// const getFavorites = async (req, res) => {
+//   try {
+//         const { userId} = req.body;
+//         const favorites = await Favourites.findOne({customerId: userId});
+//     }
+// }                                                                                                                           
    
 module.exports = {
     addToFavorite,
