@@ -197,6 +197,7 @@ const verifyOtpAndUpdateCustomer = async (req, res) => {
 
         const updateFields = {};
         if (name) updateFields.name = name;
+        if(email) updateFields.email = email;
         if (phoneNo) updateFields.phoneNo = phoneNo;
         if (req.file?.filename) updateFields.photo = "https://res.cloudinary.com/dyigkc2zy/image/upload/v1750151597/"+req.file.filename;
         if (password) updateFields.password = password;
@@ -209,7 +210,7 @@ const verifyOtpAndUpdateCustomer = async (req, res) => {
             return res.status(404).json({ success: false, message: "Customer not found" });
         }
 
-        
+
         await OTP.deleteOne({ _id: validOtp._id });
 
         return res.status(200).json({

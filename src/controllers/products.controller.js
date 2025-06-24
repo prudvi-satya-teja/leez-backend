@@ -87,7 +87,6 @@ const getAllProducts = async (req, res) => {
 
 // GET /api/products/all-products?categoryId=60f123abc456...
 
-
 const getProductsByCategory = async (req, res) => {
     try {
         const { category } = req.params;
