@@ -7,6 +7,7 @@ const vendorController = require("../controllers/vendor.controller");
 // image
 const { upload } = require("../utils/storage");
 
+
 //signup
 router.post("/signup", vendorController.signup);
 

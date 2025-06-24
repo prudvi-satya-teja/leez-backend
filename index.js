@@ -28,6 +28,7 @@ app.use("/api/customer", customerRouter);
 
 app.use("/api/vendor", vendorRouter);
 
+
 app.use("/api/category", categoryRouter);
 
 app.use("/api/specifications", specificationRouter);

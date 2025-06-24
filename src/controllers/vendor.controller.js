@@ -81,6 +81,7 @@ const login = async (req, res) => {
         console.log("Error is : ", err);
         return res.status(500).json({ success: false, message: "Server error !" });
     }
+    
 };
  
 module.exports = {

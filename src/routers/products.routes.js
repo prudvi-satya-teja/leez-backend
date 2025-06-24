@@ -18,6 +18,7 @@ router.post("/add-product", upload.array("images", 6), addProduct);
 // get product details by category
 router.get("/products-by-category/:category", getProductsByCategory);
 
+
 // get all product details
 router.get("/all-products",getAllProducts);
 

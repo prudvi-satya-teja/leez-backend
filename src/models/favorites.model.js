@@ -5,6 +5,7 @@ const favoriteSchema = new mongoose.Schema({
     customerId: { type: mongoose.Schema.Types.ObjectId, ref: "customers", required: true},
 });
 
+
 const Favourites = mongoose.model("favorites", favoriteSchema);
 
 module.exports = Favourites;

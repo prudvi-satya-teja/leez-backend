@@ -209,6 +209,7 @@ const verifyOtpAndUpdateCustomer = async (req, res) => {
             return res.status(404).json({ success: false, message: "Customer not found" });
         }
 
+        
         await OTP.deleteOne({ _id: validOtp._id });
 
         return res.status(200).json({

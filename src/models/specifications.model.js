@@ -5,6 +5,7 @@ const specificationSchema = new mongoose.Schema({
     name: { type: String, required: true },
 });
 
+
 const Specifications = mongoose.model("specifications", specificationSchema);
 
 module.exports = Specifications;

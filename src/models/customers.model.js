@@ -8,6 +8,7 @@ const customerSchema = new mongoose.Schema({
     photo: { type: String },
 });
 
+
 const Customers = mongoose.model("customers", customerSchema);
 
 module.exports = Customers;

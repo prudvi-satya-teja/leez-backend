@@ -2,6 +2,7 @@ const Favourites = require("../models/favorites.model");
 const Products = require("../models/products.model");
 const Customers = require("../models/customers.model");
 
+
 // add to favorites
 const addToFavorite = async (req, res) => {
     try {

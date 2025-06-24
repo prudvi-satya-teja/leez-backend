@@ -3,6 +3,7 @@ const Reviews = require("../models/reviews.model");
 
 // give review
 const giveReview = async (req, res) => {
+    
     try {
         const { bookingId, rating, reviewText } = req.body;
         const review = new Reviews({
@@ -18,6 +19,7 @@ const giveReview = async (req, res) => {
         return res.status(500).json({ success: true, message: "Server Error !" });
     }
 };
+
 
 // get-reviews
 const getReview = async (req, res) => {

@@ -6,6 +6,7 @@ const productSpecificationSchema = new mongoose.Schema({
     productId: { type: mongoose.Schema.Types.ObjectId, ref: "products" },
 });
 
+
 const ProductSpecifications = mongoose.model("productSpecifications", productSpecificationSchema);
 
 module.exports = ProductSpecifications;
