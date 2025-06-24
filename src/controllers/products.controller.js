@@ -84,6 +84,8 @@ const getProductsByCategory = async (req, res) => {
     try {
         const { category } = req.params;
 
+        console.log(req.params);
+
         const categoryDoc = await Category.findOne({ name: category });
         console.log(categoryDoc);
         if (!categoryDoc) {
