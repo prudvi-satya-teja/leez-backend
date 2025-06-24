@@ -67,6 +67,7 @@ const verifyOtp = async (req, res) => {
 const login = async (req, res) => {
     try {
         const { email, password } = req.body;
+        console.log(body);
 
         const user = await Vendor.findOne({ email: email } || { phoneNo: email });
         if (user.length == 0) {
@@ -83,11 +84,10 @@ const login = async (req, res) => {
     }
     
 };
- 
+
 module.exports = {
     signup,
     login,
     createAccount,
     verifyOtp,
 };
-
