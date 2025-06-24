@@ -1,6 +1,5 @@
 const otpGenerator = require("otp-generator");
 const { sendMail } = require("../utils/mail");
-
 const OTP = require("../models/otp.model");
 const Vendor = require("../models/vendors.model");
 

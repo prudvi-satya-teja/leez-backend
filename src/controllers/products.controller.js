@@ -3,6 +3,11 @@ const Category = require("../models/categories.model");
 const Product = require("../models/products.model");
 const ProductSpecifications = require("../models/product_specificatioins.model");
 const Specifications = require("../models/specifications.model");
+<<<<<<< HEAD
+=======
+const { version } = require("mongoose");
+
+>>>>>>> 02e87f74ca1be157edc22649e38627aa73da21b0
 // add product
 const addProduct = async (req, res) => {
     try {

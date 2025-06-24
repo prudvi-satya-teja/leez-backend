@@ -40,6 +40,7 @@ const signup = async (req, res) => {
 // create account after validation
 const createAccount = async (req, res) => {
     try {
+        console.log("creating account");
         const { email, phoneNo, name, password } = req.body;
 
         const user = await Customer.findOne({ email: email } || { phoneNo: phoneNo });
@@ -55,6 +56,8 @@ const createAccount = async (req, res) => {
             name: name,
             password: password,
         });
+
+        console.log("created account");
         await customerObject.save();
         return res.status(200).json({ success: true, message: "Account creation successful" });
     } catch (err) {
@@ -94,7 +97,7 @@ const verifyOtp = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: "OTP verification successful and post created",
+            message: "OTP verification successful and post account created",
             postResponse: data,
         });
     } catch (err) {
