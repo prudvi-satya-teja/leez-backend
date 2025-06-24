@@ -146,7 +146,7 @@ const generateOtpForUpdate = async (req, res) => {
         if (!email || !phoneNo) {
             return res.status(400).json({ success: false, message: "Email and phone number are required" });
         }
-        await OTP.deleteMany({ email });
+        await OTP.deleteMany({ email }); 
 
         const otp = await otpGenerator.generate(4, {
             upperCaseAlphabets: false,

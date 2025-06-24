@@ -10,24 +10,9 @@ const productSchema = new mongoose.Schema(
         description: { type: String },
         views: { type: Number, default: 0 },
         images: [String],
-        location: {
-            type: {
-                type: String,
-                enum: ["Point"],
-                required: true,
-            },
-            coordinates: {
-                type: [Number],
-                required: true,
-            },
-        },
+        longitude: { type: Number, required: true },
+        latitude: { type: Number, required: true },
         count: { type: Number, default: 1 },
-        specifications: [
-            {
-                key: { type: String, required: true },
-                value: { type: String, required: true },
-            },
-        ],
     },
     {
         timestamps: true,
