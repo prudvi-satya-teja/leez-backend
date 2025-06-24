@@ -3,8 +3,6 @@ const Category = require("../models/categories.model");
 const Product = require("../models/products.model");
 const ProductSpecifications = require("../models/product_specificatioins.model");
 const Specifications = require("../models/specifications.model");
-const { version } = require("mongoose");
-
 // add product
 const addProduct = async (req, res) => {
     try {
@@ -68,7 +66,6 @@ const addProduct = async (req, res) => {
         return res.status(500).json({ success: true, message: "Server Error !" });
     }
 };
-
 // remove product
 
 // update product
@@ -88,6 +85,32 @@ const getAllProducts = async (req, res) => {
 
 // get products by category
 
+// GET /api/products/all-products?categoryId=60f123abc456...
+
+const getProductsByCategory = async (req, res) => {
+    try {
+        const { category } = req.params;
+
+        console.log(req.params);
+
+        const categoryDoc = await Category.findOne({ name: category });
+        console.log(categoryDoc);
+        if (!categoryDoc) {
+            return res.status(404).json({ success: false, message: "Category not found" });
+        }
+
+        return res.status(200).json({
+            success: true,
+            categoryId: categoryDoc._id,
+        });
+    } catch (error) {
+        console.error("Error fetching category ID:", error);
+        return res.status(500).json({ success: false, message: "Server Error" });
+    }
+};
+
 module.exports = {
     addProduct,
+    getAllProducts,
+    getProductsByCategory
 };

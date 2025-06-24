@@ -72,7 +72,9 @@ const verifyOtp = async (req, res) => {
         console.log("verify otp");
         const { email, otp, phoneNo, name, password } = req.body;
         console.log(req.body);
-
+          if (!email || !otp || !phoneNo || !name || !password) {
+  return res.status(400).json({ success: false, message: "Missing required fields" });
+}
         const otpObject = await OTP.findOne({ email: email, otp: otp });
         if (!otpObject) {
             return res.status(400).json({ success: false, message: "Not a valid OTP" });
@@ -84,8 +86,8 @@ const verifyOtp = async (req, res) => {
             },
             body: JSON.stringify({
                 email: email,
-                name: name,
                 phoneNo: phoneNo,
+                name:name,
                 password: password,
             }),
         });
@@ -123,10 +125,109 @@ const login = async (req, res) => {
         return res.status(500).json({ success: false, message: "Server error !" });
     }
 };
+//customer details
+const customer_details = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const customer = await Customer.findById(id);
+
+        if (!customer) {
+            return res.status(404).json({ success: false, message: "Customer not found" });
+        }
+
+        return res.status(200).json({ success: true, "Customer-details": customer });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ success: false, message: "Server error" });
+    }
+};
+//updateotp
+const generateOtpForUpdate = async (req, res) => {
+    try {
+        const { email, phoneNo } = req.body;
+
+        if (!email || !phoneNo) {
+            return res.status(400).json({ success: false, message: "Email and phone number are required" });
+        }
+        await OTP.deleteMany({ email }); 
+
+        const otp = await otpGenerator.generate(4, {
+            upperCaseAlphabets: false,
+            lowerCaseAlphabets: false,
+            specialChars: false,
+        });
+
+        const otpDoc = new OTP({ email, otp, createdAt: new Date() });
+        await otpDoc.save();
+
+        const mailResult = await sendMail(
+            email,
+            "OTP for Signup",
+            `Your OTP for signing up to Leez is ${otp}. It is valid for 10 minutes.`
+        );
+
+        return res.status(200).json({
+            success: true,
+            message: "OTP sent successfully to email",
+            otpId: otpDoc._id,
+        });
+
+    } catch (err) {
+        console.error("Signup OTP error:", err);
+        return res.status(500).json({ success: false, message: "Server error while sending OTP" });
+    }
+};
+//profile update
+
+const verifyOtpAndUpdateCustomer = async (req, res) => {
+    try {
+        const { customerId, email, otp, name, phoneNo, photo, password } = req.body;
+
+        console.log(req.file);
+
+        if (!customerId || !email || !otp) {
+            return res.status(400).json({ success: false, message: "Missing OTP or customer ID" });
+        }
+
+        const validOtp = await OTP.findOne({ email, otp});
+
+        if (!validOtp) {
+            return res.status(400).json({ success: false, message: "Invalid or expired OTP" });
+        }
+
+        const updateFields = {};
+        if (name) updateFields.name = name;
+        if (phoneNo) updateFields.phoneNo = phoneNo;
+        if (req.file?.filename) updateFields.photo = req.file.filename;
+        if (password) updateFields.password = password;
+
+        const updatedCustomer = await Customer.findByIdAndUpdate(customerId, updateFields, {
+            new: true,
+        });
+
+        if (!updatedCustomer) {
+            return res.status(404).json({ success: false, message: "Customer not found" });
+        }
+
+        await OTP.deleteOne({ _id: validOtp._id });
+
+        return res.status(200).json({
+            success: true,
+            message: "OTP verified and customer updated successfully",
+            customer: updatedCustomer,
+        });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ success: false, message: "Server error" });
+    }
+};
 
 module.exports = {
     signup,
     login,
     createAccount,
     verifyOtp,
+    customer_details,
+    generateOtpForUpdate,
+    verifyOtpAndUpdateCustomer
 };
