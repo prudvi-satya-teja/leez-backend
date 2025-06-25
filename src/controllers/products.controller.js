@@ -87,30 +87,32 @@ const getAllProducts = async (req, res) => {
 // get products by category
 
 // GET /api/products/all-products?categoryId=60f123abc456...
-
 const getProductsByCategory = async (req, res) => {
     try {
-        // const { category } = req.params;
+        const { categoryId } = req.params;
+        // console.log(categoryId);
+        console.log("params is : ", req.params);
 
         console.log(req.params);
-        // console.log(categoryId);
 
-        const categoryDoc = await Category.findOne({ name: "car" });
+        const categoryDoc = await Category.findOne({ name: categoryId });
         console.log(categoryDoc);
         if (!categoryDoc) {
             return res.status(404).json({ success: false, message: "Category not found" });
         }
 
+        const products = await Product.findOne({ categoryId: categoryDoc });
+
         return res.status(200).json({
             success: true,
             categoryId: categoryDoc._id,
+            products: products,
         });
     } catch (error) {
         console.error("Error fetching category ID:", error);
         return res.status(500).json({ success: false, message: "Server Error" });
     }
 };
-
 // get product details by  Id
 const getProductDetailsByCategory = async (req, res) => {
     try {
@@ -145,7 +147,7 @@ const getProductDetailsByCategory = async (req, res) => {
             },
         ]);
 
-        return res.json({success: true, productDetails: product, specifications: specifications})
+        return res.json({ success: true, productDetails: product, specifications: specifications });
     } catch (err) {
         console.log(err);
         return res.status(500).json({ success: false, message: "" });
