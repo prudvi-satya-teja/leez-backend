@@ -2,7 +2,12 @@ const express = require("express");
 
 const router = express.Router();
 
-const { addProduct, getAllProducts, getProductsByCategory} = require("../controllers/products.controller");
+const {
+    addProduct,
+    getAllProducts,
+    getProductsByCategory,
+    getProductDetailsByCategory,
+} = require("../controllers/products.controller");
 
 // images
 const { upload } = require("../utils/storage");
@@ -15,11 +20,12 @@ router.post("/add-product", upload.array("images", 6), addProduct);
 
 // delete-prodcut
 
-// get product details by b       
+// get product details by b
 router.get("/products-by-category/:categoryId", getProductsByCategory);
 
 // get all product details
-router.get("/all-products",getAllProducts);
+router.get("/all-products", getAllProducts);
 
+router.get("/get-product-by-id", getProductDetailsByCategory);
 
 module.exports = router;
