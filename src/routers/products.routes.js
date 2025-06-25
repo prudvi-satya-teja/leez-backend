@@ -15,7 +15,7 @@ router.post("/add-product", upload.array("images", 6), addProduct);
 
 // delete-prodcut
 
-// get product details by category
+// get product details by b       
 router.get("/products-by-category/:categoryId", getProductsByCategory);
 
 // get all product details

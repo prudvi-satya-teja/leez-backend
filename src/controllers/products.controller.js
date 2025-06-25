@@ -17,6 +17,8 @@ const addProduct = async (req, res) => {
             categoryId: categoryId._id,
         });
 
+        console.log(product);
+
         if (product) {
             return res.status(400).json({ success: false, message: "Product already exists" });
         }
@@ -46,12 +48,10 @@ const addProduct = async (req, res) => {
         for (let i = 0; i < 4; i++) {
             const key = req.body[`specifications[${i}].key`];
             const value = req.body[`specifications[${i}].value`];
-            // if (key && value) {
-            //     specifications.push({ key, value });
-            // }
-            const specificationId = await Specifications({ name: key });
+            const specification = await Specifications.findOne({ name: key });
+            console.log(specification);
             const productSpecifications = new ProductSpecifications({
-                specificationId: specificationId,
+                specificationId: specification._id,
                 value: value,
                 productId: productId._id,
             });
@@ -89,11 +89,12 @@ const getAllProducts = async (req, res) => {
 
 const getProductsByCategory = async (req, res) => {
     try {
-        const { category } = req.params;
+        // const { category } = req.params;
 
         console.log(req.params);
+        // console.log(categoryId);
 
-        const categoryDoc = await Category.findOne({ name: category });
+        const categoryDoc = await Category.findOne({ name: "car" });
         console.log(categoryDoc);
         if (!categoryDoc) {
             return res.status(404).json({ success: false, message: "Category not found" });
@@ -109,8 +110,49 @@ const getProductsByCategory = async (req, res) => {
     }
 };
 
+// get product details by  Id
+const getProductDetailsByCategory = async (req, res) => {
+    try {
+        const productId = req.params.productId;
+        const product = await Product.findById(productId);
+
+        const specifications = await ProductSpecifications.aggregate([
+            {
+                $match: {
+                    productId: ObjectId("685bbb1893d68a8ac15cf10d"),
+                },
+            },
+            {
+                $lookup: {
+                    from: "specifications",
+                    localField: "specificationId",
+                    foreignField: "_id",
+                    as: "result",
+                },
+            },
+            {
+                $project: {
+                    value: 1,
+                    key: "$result.name",
+                    _id: 0,
+                },
+            },
+            {
+                $unwind: {
+                    path: "$key",
+                },
+            },
+        ]);
+
+        return res.json({success: true, productDetails: product, specifications: specifications})
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({ success: false, message: "" });
+    }
+};
+
 module.exports = {
     addProduct,
     getAllProducts,
-    getProductsByCategory
+    getProductsByCategory,
 };
