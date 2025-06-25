@@ -90,10 +90,6 @@ const getAllProducts = async (req, res) => {
 const getProductsByCategory = async (req, res) => {
     try {
         const { categoryId } = req.params;
-        // console.log(categoryId);
-        console.log("params is : ", req.params);
-
-        console.log(req.params);
 
         const categoryDoc = await Category.findOne({ name: categoryId });
         console.log(categoryDoc);
@@ -101,7 +97,7 @@ const getProductsByCategory = async (req, res) => {
             return res.status(404).json({ success: false, message: "Category not found" });
         }
 
-        const products = await Product.findOne({ categoryId: categoryDoc });
+        const products = await Product.find({ categoryId: categoryDoc });
 
         return res.status(200).json({
             success: true,
