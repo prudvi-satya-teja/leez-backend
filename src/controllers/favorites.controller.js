@@ -49,14 +49,44 @@ const removeFromFavorite = async (req, res) => {
 };
 
 // get all favorites
-// const getFavorites = async (req, res) => {
-//   try {
-//         const { userId} = req.body;
-//         const favorites = await Favourites.findOne({customerId: userId});
-//     }
-// }
+const getAllFavorites = async (req, res) => {
+    try {
+        const { userId } = req.body;
+        const userObjectId = new mongoose.Types.ObjectId(userId);
+
+        // const favorites = await Favourites.find({ customerId: userObjectId });
+        const favorites = await Favourites.aggregate([
+            {
+                $match: {
+                    customerId: userObjectId,
+                },
+            },
+            {
+                $lookup: {
+                    from: "products",
+                    localField: "productId",
+                    foreignField: "_id",
+                    as: "result",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$result",
+                },
+            },
+        ]);
+        console.log(favorites);
+        return res
+            .status(500)
+            .json({ success: true, message: "Favorites get successfull", favorites: favorites });
+    } catch (err) {
+        console.log("Error is : ", err);
+        return res.status(500).json({ success: false, message: "Server error !" });
+    }
+};
 
 module.exports = {
     addToFavorite,
     removeFromFavorite,
+    getAllFavorites,
 };
