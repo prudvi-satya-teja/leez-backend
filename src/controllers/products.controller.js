@@ -66,6 +66,7 @@ const addProduct = async (req, res) => {
         return res.status(500).json({ success: true, message: "Server Error !" });
     }
 };
+
 // remove product
 
 // update product

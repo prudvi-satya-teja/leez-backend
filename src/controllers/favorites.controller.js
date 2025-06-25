@@ -3,6 +3,7 @@ const Products = require("../models/products.model");
 const Customers = require("../models/customers.model");
 const mongoose = require("mongoose");
 
+// add to favorite
 const addToFavorite = async (req, res) => {
     try {
         const { userId, productId } = req.body;
@@ -51,9 +52,8 @@ const removeFromFavorite = async (req, res) => {
 // get all favorites
 const getAllFavorites = async (req, res) => {
     try {
-        const { userId } = req.body;
+        const { userId } = req.query;
         const userObjectId = new mongoose.Types.ObjectId(userId);
-
         // const favorites = await Favourites.find({ customerId: userObjectId });
         const favorites = await Favourites.aggregate([
             {
@@ -77,7 +77,7 @@ const getAllFavorites = async (req, res) => {
         ]);
         console.log(favorites);
         return res
-            .status(500)
+            .status(200)
             .json({ success: true, message: "Favorites get successfull", favorites: favorites });
     } catch (err) {
         console.log("Error is : ", err);
