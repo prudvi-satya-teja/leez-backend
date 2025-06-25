@@ -74,7 +74,35 @@ const addProduct = async (req, res) => {
 // get all products
 const getAllProducts = async (req, res) => {
     try {
-        const products = await Product.find({});
+        const products = await Category.aggregate([
+            {
+                $lookup: {
+                    from: "products",
+                    localField: "_id",
+                    foreignField: "categoryId",
+                    as: "result",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$result",
+                },
+            },
+            {
+                $lookup: {
+                    from: "favorites",
+                    localField: "result._id",
+                    foreignField: "productId",
+                    as: "status",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$status",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+        ]);
         return res
             .status(200)
             .json({ success: true, message: "Product added successfully", products: products });
@@ -97,7 +125,42 @@ const getProductsByCategory = async (req, res) => {
             return res.status(404).json({ success: false, message: "Category not found" });
         }
 
-        const products = await Product.find({ categoryId: categoryDoc });
+        const products = await Category.aggregate([
+            {
+                $match: {
+                    name: categoryId,
+                },
+            },
+            {
+                $lookup: {
+                    from: "products",
+                    localField: "_id",
+                    foreignField: "categoryId",
+                    as: "result",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$result",
+                },
+            },
+            {
+                $lookup: {
+                    from: "favorites",
+                    localField: "result._id",
+                    foreignField: "productId",
+                    as: "status",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$status",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+        ]);
+
+        console.log(products);
 
         return res.status(200).json({
             success: true,
