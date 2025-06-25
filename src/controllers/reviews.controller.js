@@ -31,6 +31,21 @@ const getReview = async (req, res) => {
     }
 };
 
+
+// get-rating
+const getRating = async(req, res) => {
+    try {
+        const { productId} = req.query;
+        const productObjectId = new mongoose.Types.ObjectId(productId);
+        const rating = await Reviews.aggregate([]);
+        return res.status(200).json({success: true, message: "Average Rating provided successfully"});
+    }
+    catch(err) {
+         console.log("Error is : ", err);
+        return res.status(500).json({ success: true, message: "Server Error !" });
+    }
+}
+
 module.exports = {
     giveReview,
 };
