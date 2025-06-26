@@ -84,11 +84,66 @@ const getReview = async (req, res) => {
 const getRating = async (req, res) => {
     try {
         const { productId } = req.params;
+        console.log(req.params);
+
         const productObjectId = new mongoose.Types.ObjectId(productId);
-        const rating = await Reviews.aggregate();
-        return res
-            .status(200)
-            .json({ success: true, message: "Average Rating provided successfully" });
+
+        const rating = await Bookings.aggregate([
+            {
+                $match: {
+                    productId: productObjectId,
+                },
+            },
+            {
+                $lookup: {
+                    from: "customers",
+                    localField: "customerId",
+                    foreignField: "_id",
+                    as: "customer",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$customer",
+                },
+            },
+            {
+                $project: {
+                    productId: 1,
+                    customer: 1,
+                },
+            },
+            {
+                $lookup: {
+                    from: "reviews",
+                    localField: "_id",
+                    foreignField: "bookingId",
+                    as: "review",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$review",
+                },
+            },
+            {
+                $project: {
+                    rating: "$review.rating",
+                    productId: 1,
+                },
+            },
+            {
+                $group: {
+                    _id: "productId",
+                    averageRating: { $avg: "$rating" },
+                },
+            },
+        ]);
+        return res.status(200).json({
+            success: true,
+            message: "Average Rating provided successfully",
+            averageRating: rating,
+        });
     } catch (err) {
         console.log("Error is : ", err);
         return res.status(500).json({ success: true, message: "Server Error !" });
