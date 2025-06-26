@@ -40,7 +40,6 @@ const addProduct = async (req, res) => {
         });
 
         await newProduct.save();
-
         const productId = await Product.findOne({ name: name });
 
         console.log(newProduct);
@@ -60,8 +59,6 @@ const addProduct = async (req, res) => {
 
             await productSpecifications.save();
         }
-
-        await newProduct.save();
         return res.status(200).json({ success: true, message: "Product added successfully" });
     } catch (err) {
         console.log("Error is: ", err);
