@@ -2,6 +2,9 @@ const otpGenerator = require("otp-generator");
 const { sendMail } = require("../utils/mail");
 const OTP = require("../models/otp.model");
 const Vendor = require("../models/vendors.model");
+const Products = require("../models/products.model");
+
+const mongoose = require("mongoose");
 
 // vendor signup
 const signup = async (req, res) => {
@@ -84,9 +87,34 @@ const login = async (req, res) => {
     }
 };
 
+//get all products of vendor
+const getVendorProducts = async (req, res) => {
+    try {
+        const { vendorId } = req.query;
+        console.log(vendorId);
+        const vendorObjectId = new mongoose.Types.ObjectId("684fb005ef0c1addb3ee47f3");
+
+        const vendor = await Vendor.findById(vendorObjectId);
+        console.log(vendor);
+        const products = await Products.find({ vendorId: vendorObjectId });
+
+        return res.json({
+            success: true,
+            message: "vendor products get successful",
+            products: products,
+        });
+    } catch (err) {
+        console.log("Error is : ", err);
+        return res.status(500).json({ success: false, message: "Server error !" });
+    }
+};
+
+
+
 module.exports = {
     signup,
     login,
     createAccount,
     verifyOtp,
+    getVendorProducts,
 };

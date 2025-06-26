@@ -20,9 +20,6 @@ router.post("/verify-otp", vendorController.verifyOtp);
 router.post("/create-account", vendorController.createAccount);
 
 //update profile
+router.get("/get-vendor-products", vendorController.getVendorProducts);
 
 module.exports = router;
-
-
-
-
