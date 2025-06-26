@@ -108,7 +108,7 @@ const cancelledByVendor = async (req, res) => {
         const bookingObjectId = new mongoose.Types.ObjectId(bookingId);
         const booking = await Bookings.findOneAndUpdate(
             { _id: bookingObjectId },
-            { status: "cancelled by Admin" },
+            { status: "cancelled by vendor" },
             { new: true }
         );
         return res
@@ -127,12 +127,122 @@ const returnedSuccessfully = async (req, res) => {
         const bookingObjectId = new mongoose.Types.ObjectId(bookingId);
         const booking = await Bookings.findOneAndUpdate(
             { _id: bookingObjectId },
-            { status: "cancelled by Admin" },
+            { status: "returned" },
             { new: true }
         );
         return res
             .status(200)
-            .json({ success: true, message: "Admin cancelled the booking or request" });
+            .json({ success: true, message: "Returned the product successfully" });
+    } catch (err) {
+        console.log("Error is: ", err);
+        return res.status(500).json({ success: false, message: "Server Error !" });
+    }
+};
+
+// customer bookings
+const customerBookings = async (req, res) => {
+    try {
+        const { customerId } = req.body;
+        const customerObjectId = new mongoose.Types.ObjectId(customerId);
+
+        const booking = await Bookings.aggregate([
+            {
+                $match: {
+                    customerId: customerObjectId,
+                },
+            },
+            {
+                $lookup: {
+                    from: "customers",
+                    localField: "customerId",
+                    foreignField: "_id",
+                    as: "customer",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$customer",
+                },
+            },
+            {
+                $lookup: {
+                    from: "products",
+                    localField: "productId",
+                    foreignField: "_id",
+                    as: "product",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$product",
+                },
+            },
+        ]);
+
+        return res.status(200).json({
+            success: true,
+            message: "Customer bookings get successful",
+            bookings: booking,
+        });
+    } catch (err) {
+        console.log("Error is: ", err);
+        return res.status(500).json({ success: false, message: "Server Error !" });
+    }
+};
+
+// vendor bookings
+const vendorBookings = async (req, res) => {
+    try {
+        const { vendorId } = req.body;
+        const vendorObjectId = new mongoose.Types.ObjectId(vendorId);
+
+        const booking = await Bookings.aggregate([
+            {
+                $match: {
+                    vendorId: vendorObjectId,
+                },
+            },
+            {
+                $limit: 1,
+            },
+            {
+                $project: {
+                    vendorId: 1,
+                },
+            },
+            {
+                $lookup: {
+                    from: "bookings",
+                    localField: "_id",
+                    foreignField: "productId",
+                    as: "booking",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$booking",
+                },
+            },
+            {
+                $lookup: {
+                    from: "products",
+                    localField: "booking.productId",
+                    foreignField: "_id",
+                    as: "product",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$product",
+                },
+            },
+        ]);
+
+        return res.status(200).json({
+            success: true,
+            message: "vendor bookings get successful",
+            bookings: booking,
+        });
     } catch (err) {
         console.log("Error is: ", err);
         return res.status(500).json({ success: false, message: "Server Error !" });
@@ -147,4 +257,6 @@ module.exports = {
     cancelledByUser,
     cancelledByVendor,
     returnedSuccessfully,
+    customerBookings,
+    vendorBookings,
 };

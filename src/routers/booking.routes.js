@@ -25,6 +25,12 @@ router.post("/cancel/vendor", bookingController.cancelledByVendor);
 // 7. Booking returned successfully
 router.post("/return", bookingController.returnedSuccessfully);
 
+// Get booking by customerId
+router.post("/customer-bookings", bookingController.customerBookings);
+
+// Get booking by
+router.post("/vendor-bookings", bookingController.vendorBookings);
+
 
 module.exports = router;
 

@@ -8,9 +8,9 @@ const { giveReview, getReview } = require("../controllers/reviews.controller");
 const { upload } = require("../utils/storage");
 
 //give-review
-router.post("/give-review", giveReview);
+router.post("/give-review", upload.array("images", 6), giveReview);
 
 //get-review by product id
-// router.get("/get-reviews/:productId", getReview);
+router.get("/get-reviews/:productId", getReview);
 
 module.exports = router;

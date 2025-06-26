@@ -9,7 +9,7 @@ const mongoose = require("mongoose");
 const addProduct = async (req, res) => {
     try {
         const { email, name, category, price, description, count, longitude, latitude } = req.body;
-
+        console.log(req.body);
         const vendorId = await Vendor.findOne({ email: email });
         const categoryId = await Category.findOne({ name: category });
 
