@@ -383,6 +383,8 @@ const getProductDetailsById = async (req, res) => {
     try {
         const { productId } = req.query;
 
+        console.log(productId);
+
         const product = await Product.aggregate([
             {
                 $match: {

@@ -11,10 +11,10 @@ router.post("/book", bookingController.bookItem);
 router.post("/accept", bookingController.acceptBooking);
 
 // 3. Vendor marks product as provided
-router.post("/start", bookingController.startBooking);
+router.post("/start", bookingController.activeBooking);
 
 // 4. User confirms usage has started
-router.post("/user-started", bookingController.userStartedBooking);
+// router.post("/user-started", bookingController.userStartedBooking);
 
 // 5. Cancelled by user
 router.post("/cancel/user", bookingController.cancelledByUser);
@@ -52,9 +52,7 @@ router.get("/confirmed-rentals/:vendorId", bookingController.confirmedRentals);
 //all pending rentals
 router.get("/pending-rentals/:vendorId", bookingController.pendingRentals);
 
-
 //total revenue
 router.get("/total-revenue/:vendorId", bookingController.totalRevenue);
-
 
 module.exports = router;

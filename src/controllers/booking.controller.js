@@ -52,13 +52,13 @@ const acceptBooking = async (req, res) => {
 };
 
 // start the initiation
-const startBooking = async (req, res) => {
+const activeBooking = async (req, res) => {
     try {
         const { bookingId } = req.body;
         const bookingObjectId = new mongoose.Types.ObjectId(bookingId);
         const booking = await Bookings.findOneAndUpdate(
             { _id: bookingObjectId },
-            { status: "started" },
+            { status: "active" },
             { new: true }
         );
         return res.status(200).json({ success: true, message: "Picked up the vehicle or object" });
@@ -68,22 +68,22 @@ const startBooking = async (req, res) => {
     }
 };
 
-// ongoing
-const userStartedBooking = async (req, res) => {
-    try {
-        const { bookingId } = req.body;
-        const bookingObjectId = new mongoose.Types.ObjectId(bookingId);
-        const booking = await Bookings.findOneAndUpdate(
-            { _id: bookingObjectId },
-            { status: "ongoing" },
-            { new: true }
-        );
-        return res.status(200).json({ success: true, message: "Your are started" });
-    } catch (err) {
-        console.log("Error is: ", err);
-        return res.status(500).json({ success: false, message: "Server Error !" });
-    }
-};
+// // ongoing
+// const userStartedBooking = async (req, res) => {
+//     try {
+//         const { bookingId } = req.body;
+//         const bookingObjectId = new mongoose.Types.ObjectId(bookingId);
+//         const booking = await Bookings.findOneAndUpdate(
+//             { _id: bookingObjectId },
+//             { status: "ongoing" },
+//             { new: true }
+//         );
+//         return res.status(200).json({ success: true, message: "Your are started" });
+//     } catch (err) {
+//         console.log("Error is: ", err);
+//         return res.status(500).json({ success: false, message: "Server Error !" });
+//     }
+// };
 
 // cancelled by the use
 const cancelledByUser = async (req, res) => {
@@ -290,7 +290,7 @@ const rentalsCount = async (req, res) => {
             {
                 $match: {
                     $or: [
-                        { "bookings.status": "ongoing" },
+                        { "bookings.status": "active" },
                         { "bookings.status": "confirmed" },
                         { "bookings.status": "returned" },
                     ],
@@ -424,7 +424,7 @@ const activeRentals = async (req, res) => {
             },
             {
                 $match: {
-                    $or: [{ "bookings.status": "ongoing" }],
+                    $or: [{ "bookings.status": "active" }],
                 },
             },
         ]);
@@ -666,8 +666,9 @@ const totalRevenue = async (req, res) => {
 module.exports = {
     bookItem,
     acceptBooking,
-    startBooking,
-    userStartedBooking,
+    activeBooking,
+    // startBooking,
+    // userStartedBooking,
     cancelledByUser,
     cancelledByVendor,
     returnedSuccessfully,
