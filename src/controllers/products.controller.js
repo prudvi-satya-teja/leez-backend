@@ -164,6 +164,7 @@ const getProductsByCategory = async (req, res) => {
 
         return res.status(200).json({
             success: true,
+            message: "All Products get successful",
             categoryId: categoryDoc._id,
             products: products,
         });

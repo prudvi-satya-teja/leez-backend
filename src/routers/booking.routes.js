@@ -2,7 +2,7 @@ const express = require("express");
 
 const router = express.Router();
 
-const  bookingController = require("../controllers/booking.controller");
+const bookingController = require("../controllers/booking.controller");
 
 // 1. Book an item
 router.post("/book", bookingController.bookItem);
@@ -31,7 +31,30 @@ router.post("/customer-bookings", bookingController.customerBookings);
 // Get booking by
 router.post("/vendor-bookings", bookingController.vendorBookings);
 
+// request for the vendor by vendorId
+// router.get("/requests", bookingController.requests);
+
+// count for all rentals
+router.get("/rentals-count/:vendorId", bookingController.rentalsCount);
+
+// booking count for all request
+router.get("/requests-count/:vendorId", bookingController.requestsCount);
+
+// all active rentals
+router.get("/active-rentals/:vendorId", bookingController.activeRentals);
+
+// all completed rentals
+router.get("/completed-rentals/:vendorId", bookingController.completedRentals);
+
+// all completed rentals
+router.get("/confirmed-rentals/:vendorId", bookingController.confirmedRentals);
+
+//all pending rentals
+router.get("/pending-rentals/:vendorId", bookingController.pendingRentals);
+
+
+//total revenue
+router.get("/total-revenue/:vendorId", bookingController.totalRevenue);
+
 
 module.exports = router;
-
-

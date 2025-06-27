@@ -19,6 +19,7 @@ const bookItem = async (req, res) => {
             startDateTime: startDateTime,
             endDateTime: endDateTime,
             status: "pending",
+            price: 200,
         });
 
         await booking.save();
@@ -249,6 +250,419 @@ const vendorBookings = async (req, res) => {
     }
 };
 
+//count of all rentals
+const rentalsCount = async (req, res) => {
+    try {
+        const { vendorId } = req.params;
+        console.log(vendorId);
+        const count = await Vendors.aggregate([
+            {
+                $match: {
+                    _id: new mongoose.Types.ObjectId(vendorId),
+                },
+            },
+            {
+                $lookup: {
+                    from: "products",
+                    localField: "_id",
+                    foreignField: "vendorId",
+                    as: "product",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$product",
+                },
+            },
+            {
+                $lookup: {
+                    from: "bookings",
+                    localField: "product._id",
+                    foreignField: "productId",
+                    as: "bookings",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$bookings",
+                },
+            },
+            {
+                $match: {
+                    $or: [
+                        { "bookings.status": "ongoing" },
+                        { "bookings.status": "confirmed" },
+                        { "bookings.status": "returned" },
+                    ],
+                },
+            },
+            {
+                $group: {
+                    _id: "_id",
+                    myCount: { $sum: 1 },
+                },
+            },
+            {
+                $project: {
+                    count: "$myCount",
+                    _id: 0,
+                },
+            },
+        ]);
+
+        return res
+            .status(200)
+            .json({ success: true, message: "Count provided for all rentals", count: count });
+    } catch (err) {
+        console.log("Error is: ", err);
+        return res.status(500).json({ success: false, message: "Server Error !" });
+    }
+};
+
+// count of all request
+const requestsCount = async (req, res) => {
+    try {
+        const { vendorId } = req.params;
+        // console.log(vendorId);
+        const count = await Vendors.aggregate([
+            {
+                $match: {
+                    _id: new mongoose.Types.ObjectId(vendorId),
+                },
+            },
+            {
+                $lookup: {
+                    from: "products",
+                    localField: "_id",
+                    foreignField: "vendorId",
+                    as: "product",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$product",
+                },
+            },
+            {
+                $lookup: {
+                    from: "bookings",
+                    localField: "product._id",
+                    foreignField: "productId",
+                    as: "bookings",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$bookings",
+                },
+            },
+            {
+                $match: {
+                    $or: [{ "bookings.status": "pending" }],
+                },
+            },
+            {
+                $group: {
+                    _id: "_id",
+                    myCount: { $sum: 1 },
+                },
+            },
+            {
+                $project: {
+                    requests: "$myCount",
+                    _id: 0,
+                },
+            },
+        ]);
+
+        return res
+            .status(200)
+            .json({ success: true, message: "Count provided for all requests", count: count });
+    } catch (err) {
+        console.log("Error is: ", err);
+        return res.status(500).json({ success: false, message: "Server Error !" });
+    }
+};
+
+// active rentals
+const activeRentals = async (req, res) => {
+    try {
+        const { vendorId } = req.params;
+        // console.log(vendorId);
+        const bookings = await Vendors.aggregate([
+            {
+                $match: {
+                    _id: new mongoose.Types.ObjectId(vendorId),
+                    // _id: vendorId,
+                },
+            },
+            {
+                $lookup: {
+                    from: "products",
+                    localField: "_id",
+                    foreignField: "vendorId",
+                    as: "product",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$product",
+                },
+            },
+            {
+                $lookup: {
+                    from: "bookings",
+                    localField: "product._id",
+                    foreignField: "productId",
+                    as: "bookings",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$bookings",
+                },
+            },
+            {
+                $match: {
+                    $or: [{ "bookings.status": "ongoing" }],
+                },
+            },
+        ]);
+
+        return res
+            .status(200)
+            .json({ success: true, message: "All ongoing orders", bookings: bookings });
+    } catch (err) {
+        console.log("Error is: ", err);
+        return res.status(500).json({ success: false, message: "Server Error !" });
+    }
+};
+
+//completed rentals
+const completedRentals = async (req, res) => {
+    try {
+        const { vendorId } = req.params;
+        // console.log(vendorId);
+        const completedBookings = await Vendors.aggregate([
+            {
+                $match: {
+                    _id: new mongoose.Types.ObjectId(vendorId),
+                },
+            },
+            {
+                $lookup: {
+                    from: "products",
+                    localField: "_id",
+                    foreignField: "vendorId",
+                    as: "product",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$product",
+                },
+            },
+            {
+                $lookup: {
+                    from: "bookings",
+                    localField: "product._id",
+                    foreignField: "productId",
+                    as: "bookings",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$bookings",
+                },
+            },
+            {
+                $match: {
+                    $or: [{ "bookings.status": "returned" }],
+                },
+            },
+        ]);
+
+        return res
+            .status(200)
+            .json({ success: true, message: "All completed orders", bookings: completedBookings });
+    } catch (err) {
+        console.log("Error is: ", err);
+        return res.status(500).json({ success: false, message: "Server Error !" });
+    }
+};
+
+//upcoming rentals
+const confirmedRentals = async (req, res) => {
+    try {
+        const { vendorId } = req.params;
+        // console.log(vendorId);
+        const confirmedBookings = await Vendors.aggregate([
+            {
+                $match: {
+                    _id: new mongoose.Types.ObjectId(vendorId),
+                },
+            },
+            {
+                $lookup: {
+                    from: "products",
+                    localField: "_id",
+                    foreignField: "vendorId",
+                    as: "product",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$product",
+                },
+            },
+            {
+                $lookup: {
+                    from: "bookings",
+                    localField: "product._id",
+                    foreignField: "productId",
+                    as: "bookings",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$bookings",
+                },
+            },
+            {
+                $match: {
+                    $or: [{ "bookings.status": "confirmed" }],
+                },
+            },
+        ]);
+
+        return res
+            .status(200)
+            .json({ success: true, message: "All confirmed orders", bookings: confirmedBookings });
+    } catch (err) {
+        console.log("Error is: ", err);
+        return res.status(500).json({ success: false, message: "Server Error !" });
+    }
+};
+
+// pending requests
+const pendingRentals = async (req, res) => {
+    try {
+        const { vendorId } = req.params;
+        // console.log(vendorId);
+        const pendingBookings = await Vendors.aggregate([
+            {
+                $match: {
+                    _id: new mongoose.Types.ObjectId(vendorId),
+                },
+            },
+            {
+                $lookup: {
+                    from: "products",
+                    localField: "_id",
+                    foreignField: "vendorId",
+                    as: "product",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$product",
+                },
+            },
+            {
+                $lookup: {
+                    from: "bookings",
+                    localField: "product._id",
+                    foreignField: "productId",
+                    as: "bookings",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$bookings",
+                },
+            },
+            {
+                $match: {
+                    $or: [{ "bookings.status": "pending" }],
+                },
+            },
+        ]);
+
+        return res
+            .status(200)
+            .json({ success: true, message: "All pending orders", bookings: pendingBookings });
+    } catch (err) {
+        console.log("Error is: ", err);
+        return res.status(500).json({ success: false, message: "Server Error !" });
+    }
+};
+
+// accepted request
+// same as upcomfing
+
+// total revenue
+const totalRevenue = async (req, res) => {
+    try {
+        const { vendorId } = req.params;
+        const totalRevenue = await Vendors.aggregate([
+            {
+                $match: {
+                    _id: new mongoose.Types.ObjectId(vendorId),
+                },
+            },
+            {
+                $lookup: {
+                    from: "products",
+                    localField: "_id",
+                    foreignField: "vendorId",
+                    as: "product",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$product",
+                },
+            },
+            {
+                $lookup: {
+                    from: "bookings",
+                    localField: "product._id",
+                    foreignField: "productId",
+                    as: "bookings",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$bookings",
+                },
+            },
+            {
+                $group: {
+                    _id: "_id",
+                    totalRevenue: {
+                        $sum: { $toInt: "$bookings.price" },
+                    },
+                },
+            },
+            {
+                $project: {
+                    totalRevenue: 1,
+                    _id: 0,
+                },
+            },
+        ]);
+
+        return res.status(200).json({
+            success: true,
+            message: "Total revenue get successfully",
+            totalRevenue: totalRevenue,
+        });
+    } catch (err) {
+        console.log("Error is: ", err);
+        return res.status(500).json({ success: false, message: "Server Error !" });
+    }
+};
+
 module.exports = {
     bookItem,
     acceptBooking,
@@ -259,4 +673,11 @@ module.exports = {
     returnedSuccessfully,
     customerBookings,
     vendorBookings,
+    rentalsCount,
+    requestsCount,
+    activeRentals,
+    completedRentals,
+    confirmedRentals,
+    pendingRentals,
+    totalRevenue,
 };
