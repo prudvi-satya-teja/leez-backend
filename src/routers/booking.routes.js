@@ -26,10 +26,10 @@ router.post("/cancel/vendor", bookingController.cancelledByVendor);
 router.post("/return", bookingController.returnedSuccessfully);
 
 // Get booking by customerId
-router.post("/customer-bookings", bookingController.customerBookings);
+router.get("/customer-bookings/:customerId", bookingController.customerBookings);
 
 // Get booking by
-router.post("/vendor-bookings", bookingController.vendorBookings);
+router.get("/vendor-bookings/:vendorId", bookingController.vendorBookings);
 
 // request for the vendor by vendorId
 // router.get("/requests", bookingController.requests);

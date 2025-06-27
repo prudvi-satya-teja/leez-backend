@@ -8,7 +8,7 @@ const mongoose = require("mongoose");
 // book an product
 const bookItem = async (req, res) => {
     try {
-        const { productId, customerId, count, startDateTime, endDateTime } = req.body;
+        const { productId, customerId, count, startDateTime, endDateTime, price } = req.body;
         const productObjectId = new mongoose.Types.ObjectId(productId);
         const customerObjectId = new mongoose.Types.ObjectId(customerId);
 
@@ -19,7 +19,7 @@ const bookItem = async (req, res) => {
             startDateTime: startDateTime,
             endDateTime: endDateTime,
             status: "pending",
-            price: 200,
+            price: price,
         });
 
         await booking.save();
@@ -143,7 +143,7 @@ const returnedSuccessfully = async (req, res) => {
 // customer bookings
 const customerBookings = async (req, res) => {
     try {
-        const { customerId } = req.body;
+        const { customerId } = req.params;
         const customerObjectId = new mongoose.Types.ObjectId(customerId);
 
         const booking = await Bookings.aggregate([
@@ -194,7 +194,7 @@ const customerBookings = async (req, res) => {
 // vendor bookings
 const vendorBookings = async (req, res) => {
     try {
-        const { vendorId } = req.body;
+        const { vendorId } = req.params;
         const vendorObjectId = new mongoose.Types.ObjectId(vendorId);
 
         const booking = await Bookings.aggregate([

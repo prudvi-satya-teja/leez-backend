@@ -16,11 +16,10 @@ connectToDB(process.env.MONGO_DB_URL)
     .then(() => {
         console.log("MongoDB connected successfully");
     })
-    
     .catch((err) => {
         console.log("MongoDB connection error : ", err);
-    });
-
+    });  
+  
 const app = express();
 
 app.use(express.json());

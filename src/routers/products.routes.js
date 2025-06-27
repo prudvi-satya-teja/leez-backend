@@ -14,7 +14,7 @@ const { upload } = require("../utils/storage");
 const Products = require("../models/products.model");
 
 // add-product
-router.post("/add-product", upload.array("images", 6), addProduct);
+router.post("/add-product", upload.array("images", 10), addProduct);
 
 // update-product
 

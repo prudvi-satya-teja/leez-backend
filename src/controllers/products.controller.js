@@ -8,11 +8,15 @@ const mongoose = require("mongoose");
 // add product
 const addProduct = async (req, res) => {
     try {
+        //   console.log("Request Body:", JSON.stringify(req.body, null, 2));
+
+        // console.log("hello");
         const { email, name, category, price, description, count, longitude, latitude } = req.body;
         console.log(req.body);
         const vendorId = await Vendor.findOne({ email: email });
         const categoryId = await Category.findOne({ name: category });
 
+        console.log("hello");
         const product = await Product.findOne({
             vendorId: vendorId._id,
             name: name,
@@ -20,6 +24,8 @@ const addProduct = async (req, res) => {
         });
 
         console.log(product);
+
+        console.log("hello");
 
         if (product) {
             return res.status(400).json({ success: false, message: "Product already exists" });
