@@ -73,24 +73,117 @@ const addProduct = async (req, res) => {
 // get all products
 const getAllProducts = async (req, res) => {
     try {
+        // const products = await Category.aggregate([
+        //     {
+        //         $lookup: {
+        //             from: "products",
+        //             localField: "_id",
+        //             foreignField: "categoryId",
+        //             as: "result",
+        //         },
+        //     },
+        //     {
+        //         $unwind: {
+        //             path: "$result",
+        //         },
+        //     },
+        //     {
+        //         $lookup: {
+        //             from: "favorites",
+        //             localField: "result._id",
+        //             foreignField: "productId",
+        //             as: "status",
+        //         },
+        //     },
+        //     {
+        //         $unwind: {
+        //             path: "$status",
+        //             preserveNullAndEmptyArrays: true,
+        //         },
+        //     },
+        // ]);
+
         const products = await Category.aggregate([
             {
                 $lookup: {
                     from: "products",
                     localField: "_id",
                     foreignField: "categoryId",
-                    as: "result",
+                    as: "product",
+                },
+            },
+            {
+                $unwind: "$product",
+            },
+
+            {
+                $lookup: {
+                    from: "bookings",
+                    localField: "product._id",
+                    foreignField: "productId",
+                    as: "bookings",
                 },
             },
             {
                 $unwind: {
-                    path: "$result",
+                    path: "$bookings",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+
+            {
+                $lookup: {
+                    from: "reviews",
+                    localField: "bookings._id",
+                    foreignField: "bookingId",
+                    as: "review",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$review",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+
+            {
+                $group: {
+                    _id: "$product._id",
+                    ratings: { $push: "$review.rating" },
+                    productDetails: { $first: "$product" },
+                },
+            },
+
+            {
+                $project: {
+                    _id: 1,
+                    averageRating: {
+                        $cond: [
+                            {
+                                $eq: [
+                                    {
+                                        $size: {
+                                            $filter: {
+                                                input: "$ratings",
+                                                as: "r",
+                                                cond: { $ne: ["$$r", null] },
+                                            },
+                                        },
+                                    },
+                                    0,
+                                ],
+                            },
+                            null,
+                            { $avg: "$ratings" },
+                        ],
+                    },
+                    productDetails: 1,
                 },
             },
             {
                 $lookup: {
                     from: "favorites",
-                    localField: "result._id",
+                    localField: "_id",
                     foreignField: "productId",
                     as: "status",
                 },
@@ -101,10 +194,18 @@ const getAllProducts = async (req, res) => {
                     preserveNullAndEmptyArrays: true,
                 },
             },
+            {
+                $project: {
+                    _id: 0,
+                    result: "$productDetails",
+                    averageRating: 1,
+                    status: 1,
+                },
+            },
         ]);
         return res
             .status(200)
-            .json({ success: true, message: "Product added successfully", products: products });
+            .json({ success: true, message: "Product get successfully", products: products });
     } catch (err) {
         console.log("Error is: ", err);
         return res.status(500).json({ success: true, message: "Server Error !" });
