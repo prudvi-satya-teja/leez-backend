@@ -6,7 +6,7 @@ const {
     addProduct,
     getAllProducts,
     getProductsByCategory,
-    getProductDetailsByCategory,
+    getProductDetailsById,
 } = require("../controllers/products.controller");
 
 // images
@@ -26,6 +26,6 @@ router.get("/products-by-category/:categoryId", getProductsByCategory);
 // get all product details
 router.get("/all-products", getAllProducts);
 
-router.get("/get-product-by-id", getProductDetailsByCategory);
+router.get("/get-product-by-id", getProductDetailsById);
 
 module.exports = router;

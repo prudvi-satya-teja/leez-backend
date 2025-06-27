@@ -66,10 +66,6 @@ const addProduct = async (req, res) => {
     }
 };
 
-// remove product
-
-// update product
-
 // get all products
 const getAllProducts = async (req, res) => {
     try {
@@ -213,23 +209,18 @@ const getAllProducts = async (req, res) => {
 };
 
 // get products by category
-
-// GET /api/products/all-products?categoryId=60f123abc456...
 const getProductsByCategory = async (req, res) => {
     try {
         const { categoryId } = req.params;
+        console.log(categoryId);
 
-        const categoryDoc = await Category.findOne({ name: categoryId });
-
-        console.log(categoryDoc);
-        if (!categoryDoc) {
-            return res.status(404).json({ success: false, message: "Category not found" });
-        }
+        const category = await Category.findOne({ name: categoryId });
+        console.log(category);
 
         const products = await Category.aggregate([
             {
                 $match: {
-                    name: categoryId,
+                    _id: new mongoose.Types.ObjectId(category),
                 },
             },
             {
@@ -237,18 +228,81 @@ const getProductsByCategory = async (req, res) => {
                     from: "products",
                     localField: "_id",
                     foreignField: "categoryId",
-                    as: "result",
+                    as: "product",
+                },
+            },
+            {
+                $unwind: "$product",
+            },
+
+            {
+                $lookup: {
+                    from: "bookings",
+                    localField: "product._id",
+                    foreignField: "productId",
+                    as: "bookings",
                 },
             },
             {
                 $unwind: {
-                    path: "$result",
+                    path: "$bookings",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+
+            {
+                $lookup: {
+                    from: "reviews",
+                    localField: "bookings._id",
+                    foreignField: "bookingId",
+                    as: "review",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$review",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+
+            {
+                $group: {
+                    _id: "$product._id",
+                    ratings: { $push: "$review.rating" },
+                    productDetails: { $first: "$product" },
+                },
+            },
+
+            {
+                $project: {
+                    _id: 1,
+                    averageRating: {
+                        $cond: [
+                            {
+                                $eq: [
+                                    {
+                                        $size: {
+                                            $filter: {
+                                                input: "$ratings",
+                                                as: "r",
+                                                cond: { $ne: ["$$r", null] },
+                                            },
+                                        },
+                                    },
+                                    0,
+                                ],
+                            },
+                            null,
+                            { $avg: "$ratings" },
+                        ],
+                    },
+                    productDetails: 1,
                 },
             },
             {
                 $lookup: {
                     from: "favorites",
-                    localField: "result._id",
+                    localField: "_id",
                     foreignField: "productId",
                     as: "status",
                 },
@@ -259,14 +313,63 @@ const getProductsByCategory = async (req, res) => {
                     preserveNullAndEmptyArrays: true,
                 },
             },
+            {
+                $project: {
+                    _id: 0,
+                    result: "$productDetails",
+                    averageRating: 1,
+                    status: 1,
+                },
+            },
         ]);
 
         console.log(products);
+        // console.log(categoryDoc);
+        // if (!categoryDoc) {
+        //     return res.status(404).json({ success: false, message: "Category not found" });
+        // }
+
+        // const products = await Category.aggregate([
+        //     {
+        //         $match: {
+        //             name: categoryId,
+        //         },
+        //     },
+        //     {
+        //         $lookup: {
+        //             from: "products",
+        //             localField: "_id",
+        //             foreignField: "categoryId",
+        //             as: "result",
+        //         },
+        //     },
+        //     {
+        //         $unwind: {
+        //             path: "$result",
+        //         },
+        //     },
+        //     {
+        //         $lookup: {
+        //             from: "favorites",
+        //             localField: "result._id",
+        //             foreignField: "productId",
+        //             as: "status",
+        //         },
+        //     },
+        //     {
+        //         $unwind: {
+        //             path: "$status",
+        //             preserveNullAndEmptyArrays: true,
+        //         },
+        //     },
+        // ]);
+
+        // console.log(products);
 
         return res.status(200).json({
             success: true,
             message: "All Products get successful",
-            categoryId: categoryDoc._id,
+            // categoryId: categoryDoc._id,
             products: products,
         });
     } catch (error) {
@@ -274,18 +377,90 @@ const getProductsByCategory = async (req, res) => {
         return res.status(500).json({ success: false, message: "Server Error" });
     }
 };
+
 // get product details by  Id
-const getProductDetailsByCategory = async (req, res) => {
+const getProductDetailsById = async (req, res) => {
     try {
         const { productId } = req.query;
-        const productObjectId = new mongoose.Types.ObjectId("685bc0879af09398acc4197f");
 
-        const product = await Product.findById(productObjectId);
-        console.log(productObjectId);
+        const product = await Product.aggregate([
+            {
+                $match: {
+                    _id: new mongoose.Types.ObjectId(productId),
+                },
+            },
+            {
+                $lookup: {
+                    from: "bookings",
+                    localField: "_id",
+                    foreignField: "productId",
+                    as: "bookings",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$bookings",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $lookup: {
+                    from: "reviews",
+                    localField: "bookings._id",
+                    foreignField: "bookingId",
+                    as: "review",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$review",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $group: {
+                    _id: "$_id",
+                    ratings: {
+                        $push: {
+                            $cond: [
+                                { $ne: ["$review.rating", null] },
+                                "$review.rating",
+                                "$$REMOVE",
+                            ],
+                        },
+                    },
+                    productDetails: { $first: "$$ROOT" },
+                },
+            },
+            {
+                $project: {
+                    _id: 0,
+                    productDetails: {
+                        _id: "$productDetails._id",
+                        vendorId: "$productDetails.vendorId",
+                        name: "$productDetails.name",
+                        categoryId: "$productDetails.categoryId",
+                        price: "$productDetails.price",
+                        description: "$productDetails.description",
+                        views: "$productDetails.views",
+                        images: "$productDetails.images",
+                        longitude: "$productDetails.longitude",
+                        latitude: "$productDetails.latitude",
+                        count: "$productDetails.count",
+                        createdAt: "$productDetails.createdAt",
+                        updatedAt: "$productDetails.updatedAt",
+                        __v: "$productDetails.__v",
+                    },
+                    averageRating: {
+                        $cond: [{ $eq: [{ $size: "$ratings" }, 0] }, null, { $avg: "$ratings" }],
+                    },
+                },
+            },
+        ]);
         const specifications = await ProductSpecifications.aggregate([
             {
                 $match: {
-                    productId: productObjectId,
+                    productId: new mongoose.Types.ObjectId(productId),
                 },
             },
             {
@@ -321,5 +496,5 @@ module.exports = {
     addProduct,
     getAllProducts,
     getProductsByCategory,
-    getProductDetailsByCategory,
+    getProductDetailsById,
 };
