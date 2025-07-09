@@ -32,7 +32,7 @@ const signup = async (req, res) => {
         return res.status(500).json({ success: false, message: "Server error !" });
     }
 };
-
+      
 // create account after validation
 const createAccount = async (req, res) => {
     try {
@@ -50,7 +50,7 @@ const createAccount = async (req, res) => {
         return res.status(500).json({ success: false, message: "Server error !" });
     }
 };
-
+     
 // verify otp
 const verifyOtp = async (req, res) => {
     try {
@@ -65,7 +65,7 @@ const verifyOtp = async (req, res) => {
         return res.status(500).json({ success: false, message: "Server error!" });
     }
 };
-
+     
 // vendor login
 const login = async (req, res) => {
     try {
@@ -86,7 +86,7 @@ const login = async (req, res) => {
         return res.status(500).json({ success: false, message: "Server error !" });
     }
 };
-
+    
 //get all products of vendor
 const getVendorProducts = async (req, res) => {
     try {
@@ -108,7 +108,7 @@ const getVendorProducts = async (req, res) => {
         return res.status(500).json({ success: false, message: "Server error !" });
     }
 };
-
+    
 
 
 module.exports = {
@@ -118,3 +118,4 @@ module.exports = {
     verifyOtp,
     getVendorProducts,
 };
+

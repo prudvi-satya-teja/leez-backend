@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 require("dotenv").config();
 
 const { connectToDB } = require("./config/connection");
@@ -18,10 +19,11 @@ connectToDB(process.env.MONGO_DB_URL)
     })
     .catch((err) => {
         console.log("MongoDB connection error : ", err);
-    });  
-  
+    });
+
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 
 app.use("/api/customer", customerRouter);
@@ -49,10 +51,5 @@ setInterval(() => {
 }, 840000);
 
 app.listen(port, () => {
-    setInterval(() => {
-    try {
-        fetch("https://leez-app.onrender.com");
-    } catch (e) {}
-}, 840000);
     console.log(`Server is running at port ${port}`);
 });
